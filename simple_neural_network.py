@@ -42,19 +42,19 @@ for epoch in range(epochs):
         l.shape += (1,)
 
         hidden_before_active = bias_input_hidden + weights_Input_hidden @ img
-        h = 1 / (1 + np.exp(-hidden_before_active))
+        hidden = 1 / (1 + np.exp(-hidden_before_active))
 
-        o_pre = bias_hidden_output + weights_hidden_output @ h
-        o = 1 / (1 + np.exp(-o_pre))
+        output_before_active = bias_hidden_output + weights_hidden_output @ hidden
+        output = 1 / (1 + np.exp(-output_before_active))
 
-        e = 1 / len(o) * np.sum((o - l) ** 2, axis=0)
-        nr_correct += int(np.argmax(o) == np.argmax(l))
+        e = 1 / len(output) * np.sum((output - l) ** 2, axis=0)
+        nr_correct += int(np.argmax(output) == np.argmax(l))
 
-        delta_o = o - l
-        weights_hidden_output += -learn_rate * delta_o @ np.transpose(h)
+        delta_o = output - l
+        weights_hidden_output += -learn_rate * delta_o @ np.transpose(hidden)
         bias_hidden_output += -learn_rate * delta_o
 
-        delta_h = np.transpose(weights_hidden_output) @ delta_o * (h * (1 - h))
+        delta_h = np.transpose(weights_hidden_output) @ delta_o * (hidden * (1 - hidden))
         weights_Input_hidden += -learn_rate * delta_h @ np.transpose(img)
         bias_input_hidden += -learn_rate * delta_h
 
